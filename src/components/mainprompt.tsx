@@ -1,7 +1,6 @@
 "use client"
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { FiArrowRight } from 'react-icons/fi';
 
 export default function MainPrompt() {
@@ -18,6 +17,7 @@ export default function MainPrompt() {
 
   useEffect(() => {
     if (textAreaRef.current) {
+
       textAreaRef.current.style.height = 'auto';
       textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
     }
@@ -27,12 +27,7 @@ export default function MainPrompt() {
     if (query.trim()) {
       setLoading(true);
       try {
-        const res = await axios.post('/api/query', { query });
-        const result = res.data.answer;
-
         sessionStorage.setItem('searchQuery', query);
-        sessionStorage.setItem('searchResult', result);
-
         router.push('/search/' + makeChatId(query));
       } catch (error) {
         console.error('Error fetching result:', error);
@@ -44,9 +39,8 @@ export default function MainPrompt() {
 
   return (
     <div className="flex flex-col items-center justify-center max-h-screen w-full p-4 sm:p-8 animate-fadeIn ">
-      <h1 className="text-4xl font-regular text-text mb-8 text-center">What do you want to know?</h1>
+      <h1 className="text-4xl font-light text-text mb-8 text-center">What do you want to know?</h1>
       <div className="relative w-full max-w-xl p-4 border bg-primary border-border rounded-xl shadow-md flex flex-col min-h-[100px]">
-
         <textarea
           ref={textAreaRef}
           className="w-full bg-transparent text-text rounded-lg resize-none focus:outline-none mb-4"
@@ -54,6 +48,12 @@ export default function MainPrompt() {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Ask me anything..."
           rows={2} // Initial minimum rows for text area
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              handleSearch();
+            }
+          }}
         />
 
         {/* Button at Bottom */}

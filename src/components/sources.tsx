@@ -1,12 +1,33 @@
-export default function HorizontalGrid() {
+import React from 'react';
+
+interface HorizontalGridProps {
+    loading: boolean;
+}
+
+export default function HorizontalGrid({ loading }: HorizontalGridProps) {
+    if (loading) {
+        return (
+            <div className="w-full h-full">
+                <div className="grid grid-flow-col auto-cols-max gap-2 overflow-x-auto scrollbar-hide h-full min-h-24">
+                    {/* Container for each item */}
+                    {[...Array(4)].map((_, index) => (
+                        <div key={index} className="col-span-1 bg-darkGray h-24 w-48 rounded-lg relative overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-r from-darkGray via-black/5 to-darkGray animate-shimmer"></div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="w-full">
-            <div className="grid grid-flow-col auto-cols-max gap-2 overflow-x-auto scrollbar-hide">
+        <div className="w-full h-full">
+            <div className="grid grid-flow-col auto-cols-max gap-2 overflow-x-auto scrollbar-hide h-full">
                 {/* Container for each item */}
                 {[...Array(4)].map((_, index) => (
                     <div
                         key={index}
-                        className="flex flex-col justify-between p-3 rounded-lg shadow-md bg-darkGray min-w-[200px] h-24 w-48 text-white"
+                        className="flex flex-col justify-between p-3 rounded-lg shadow-md bg-darkGray min-w-[200px] h-full w-48 text-white"
                     >
                         {/* Title */}
                         <div className="flex-1 mb-1">
@@ -30,7 +51,6 @@ export default function HorizontalGrid() {
                             </div>
                         </div>
                     </div>
-
                 ))}
             </div>
         </div>
