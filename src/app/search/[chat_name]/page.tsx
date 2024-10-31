@@ -1,16 +1,17 @@
 
 "use client"
+
 import HorizontalGrid from '@/components/sources';
+import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import axios from 'axios';
 
 export default function ChatPage() {
   const [query, setQuery] = useState<string | null>(null);
   const [followup, setFollowup] = useState<string | null>(null);
-  const [response, setResponse] = useState<string | null>(null);
+  const [response, setResponse] = useState<string | null>("");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -20,6 +21,65 @@ export default function ChatPage() {
       textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
     }
   }, [followup]);
+
+  // Stream Response
+  // useEffect(() => {
+  //   const fetchInitialResponse = async () => {
+  //     const storedQuery = sessionStorage.getItem('searchQuery');
+  //     if (storedQuery) {
+  //       setQuery(storedQuery);
+  //       setIsLoading(true);
+
+  //       try {
+  //         const res = await fetch('/api/query', {
+  //           method: 'POST',
+  //           headers: { 'Content-Type': 'application/json' },
+  //           body: JSON.stringify({ query: storedQuery }),
+  //         });
+
+  //         const reader = res.body?.getReader();
+  //         const decoder = new TextDecoder();
+
+
+  //         if (reader) {
+  //           while (true) {
+  //             const { done, value } = await reader.read();
+  //             if (done) {
+  //               console.log('Stream complete', response);
+  //               break
+  //             };
+
+  //             const chunk = decoder.decode(value, { stream: true });
+  //             console.log('Chunk:', chunk);
+  //             const lines = chunk.split("\n").filter(Boolean);
+
+  //             lines.forEach((line) => {
+  //               try {
+  //                 const parsedLine = JSON.parse(line.replace(/^data:\s*/, ''));
+  //                 const newText = parsedLine.content?.text;
+  //                 if (newText) {
+  //                   setResponse((prev) => prev + newText);
+  //                   setIsLoading(false);
+  //                 }
+  //               } catch (error) {
+  //                 console.error("Error parsing chunk:", error);
+  //               }
+  //             });
+  //           }
+  //         }
+  //       } catch (error) {
+  //         console.error('Error fetching response:', error);
+  //         setResponse('An error occurred while fetching the response.');
+  //       } finally {
+  //         setIsLoading(false);
+  //       }
+  //     }
+  //   };
+
+
+  //   fetchInitialResponse();
+
+  // }, []);
 
   useEffect(() => {
     const fetchInitialResponse = async () => {
@@ -42,6 +102,7 @@ export default function ChatPage() {
   }, []); // Empty array ensures this only runs once on mount
 
   return (
+
     <div className='md:px-12 pt-12 lg:px-44'>
       <div className="md:grid grid-cols-12 text-text gap-xl min-h-screen  animate-fadeIn">
         <div className="col-span-8">
@@ -58,7 +119,7 @@ export default function ChatPage() {
           {/* Answer */}
           <div className="p-4  rounded-lg  ">
             <h2 className="text-xl mb-2">Answer</h2>
-            <div className="text-text pb-10">
+            <div className="text-text ">
               {isLoading ? (
                 <div className="space-y-2">
                   {[...Array(3)].map((_, index) => (
@@ -68,7 +129,7 @@ export default function ChatPage() {
               ) : (
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
-                  className="prose"
+                  className="prose pb-24"
                 >
                   {response}
                 </ReactMarkdown>

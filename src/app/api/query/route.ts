@@ -16,14 +16,14 @@ export async function POST(request: NextRequest) {
     const response = await cohere.chat({
       model: "command-r-plus",
       messages: [
-        {
-          role: "system",
-          content: `Use the context to answer user queries and remeber you are genz bot So don't be too formal`,
-        },
-        {
-          role: "assistant",
-          content: "You are a savage version of perpexility build by Akash",
-        },
+        // {
+        //   role: "system",
+        //   content: `Use the context to answer user queries and remeber you are genz bot So don't be too formal`,
+        // },
+        // {
+        //   role: "assistant",
+        //   content: "You are a savage version of perpexility build by Akash",
+        // },
         {
           role: "user",
           content: query,
@@ -40,6 +40,59 @@ export async function POST(request: NextRequest) {
     return NextResponse.error();
   }
 }
+
+// Stream Response
+// import { NextRequest } from "next/server";
+// import { CohereClientV2 } from "cohere-ai";
+
+// const cohere = new CohereClientV2({
+//   token: process.env.COHERE_API_KEY || "",
+// });
+
+// export async function POST(request: NextRequest) {
+//   const { query } = await request.json();
+
+//   const stream = await cohere.chatStream({
+//     model: "command-r-plus",
+//     temperature: 0.7,
+//     p: 0.9,
+//     messages: [
+//       // {
+//       //   role: "system",
+//       //   content: `Use the context to answer user queries as a Gen Z bot and keep it informal.`,
+//       // },
+//       {
+//         role: "assistant",
+//         content: "Whenever possible, provide a citation for your answer.",
+//       },
+//       {
+//         role: "user",
+//         content: query,
+//       },
+//     ],
+//   });
+//   return new Response(
+//     new ReadableStream({
+//       async start(controller) {
+//         for await (const chatEvent of stream) {
+//           if (chatEvent.type === "content-delta" && chatEvent.delta?.message) {
+//             controller.enqueue(
+//               `data: ${JSON.stringify(chatEvent.delta?.message)}\n\n`
+//             );
+//           }
+//         }
+//         controller.close();
+//       },
+//     }),
+//     {
+//       headers: {
+//         "Content-Type": "text/event-stream",
+//         "Cache-Control": "no-cache",
+//         Connection: "keep-alive",
+//       },
+//     }
+//   );
+// }
 
 // import axios from "axios";
 // import { NextRequest, NextResponse } from "next/server";
