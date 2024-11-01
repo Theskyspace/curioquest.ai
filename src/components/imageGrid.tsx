@@ -22,15 +22,14 @@ export default function ImageGrid({ loading, images = [] }: ImageGridProps) {
             </div>
         );
     } else {
-        console.log("Length : ", images.length);
         try {
             return (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-row md:grid md:grid-rows-1 md:grid-cols-2 gap-4">
                     {images.slice(0, 5).map((image, index) => (
                         <div
                             key={image.url}
-                            className={`${index === 0 ? 'col-span-1 md:col-span-2 h-48' : 'col-span-1 h-24'
-                                } bg-darkGray w-full rounded-lg relative overflow-hidden`}
+                            className={`${index === 0 ? 'md:col-span-2 md:h-48' : 'h-24'
+                                } w-full bg-darkGray rounded-lg relative overflow-hidden`}
                         >
                             <img
                                 src={image.thumbnailUrl}
@@ -40,6 +39,7 @@ export default function ImageGrid({ loading, images = [] }: ImageGridProps) {
                         </div>
                     ))}
                 </div>
+
             );
         } catch (e) {
             console.log(e);

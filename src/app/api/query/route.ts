@@ -12,10 +12,12 @@ const cohereService = new CohereService();
 export async function POST(request: NextRequest) {
   const { query } = await request.json();
   console.log("Query:", query);
+
   interface FinalResponse {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     searchEngine?: any; // Replace 'any' with a more specific type if possible
     AIgenerated?: string;
+    context?: string[];
   }
 
   const finalResponse: FinalResponse = {};
@@ -31,9 +33,18 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const context = finalResponse.searchEngine?.webPages?.map(
+    (result: { name: string; url: string; snippet: string }, index: number) =>
+      `${index + 1}. ${result.name} - ${result.snippet}`
+  );
+  finalResponse.context = finalResponse.searchEngine?.webPages;
+
   // Form the answer using the context with the cohere API
   try {
-    const generatedAnswer = await cohereService.generateAnswer("Hello", query);
+    const generatedAnswer = await cohereService.generateAnswer(
+      context.join("\n"),
+      query
+    );
     finalResponse.AIgenerated = generatedAnswer;
   } catch (error) {
     console.error("Cohere API Error:", error);
