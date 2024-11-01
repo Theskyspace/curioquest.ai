@@ -1,19 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { BingSearchService } from "@/services/BingSearchService";
-// import { CohereService } from "@/services/CohereSerivce";
+import { CohereService } from "@/services/CohereSerivce";
 
 // const cohere = new CohereClientV2({
 //   token: process.env.COHERE_API_KEY as string,
 // });
 
 const bingService = new BingSearchService(process.env.BING_API_KEY || "");
-// const cohereService = new CohereService();
+const cohereService = new CohereService();
 
 export async function POST(request: NextRequest) {
   const { query } = await request.json();
   console.log("Query:", query);
-  // TODO: Define the structure of the final response
-  let finalResponse: any = {};
+  interface FinalResponse {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    searchEngine?: any; // Replace 'any' with a more specific type if possible
+    AIgenerated?: string;
+  }
+
+  const finalResponse: FinalResponse = {};
 
   try {
     const bingResponse = await bingService.search(query);
@@ -25,7 +30,19 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-  console.log("Final Response:", finalResponse);
+
+  // Form the answer using the context with the cohere API
+  try {
+    const generatedAnswer = await cohereService.generateAnswer("Hello", query);
+    finalResponse.AIgenerated = generatedAnswer;
+  } catch (error) {
+    console.error("Cohere API Error:", error);
+    return NextResponse.json(
+      { error: "Our AI Partner failed! Try again later" },
+      { status: 500 }
+    );
+  }
+
   return NextResponse.json(finalResponse);
 
   // try {

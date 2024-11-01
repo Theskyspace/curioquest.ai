@@ -13,8 +13,9 @@ import remarkGfm from 'remark-gfm';
 
 export default function ChatPage() {
   const [query, setQuery] = useState<string | null>(null);
-  const [followup, setFollowup] = useState<any | null>({});
-  const [response, setResponse] = useState<any | null>({});
+  const [followup, setFollowup] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [response, setResponse] = useState<any>({});
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -95,6 +96,7 @@ export default function ChatPage() {
           setIsLoading(false);
           console.log("Response:", res.data);
         } catch (error) {
+          console.log(error);
           toast.error('Failed to fetch answer from Cohere');
           setResponse('An error occurred while fetching the response.');
           setIsLoading(false);
@@ -117,7 +119,7 @@ export default function ChatPage() {
           {/* Sources */}
           <div className="p-4 rounded-lg">
             <h2 className="text-xl mb-2">Sources</h2>
-            <HorizontalGrid loading={isLoading} />
+            <HorizontalGrid loading={isLoading} source_items={response?.searchEngine?.webPages ? response.searchEngine.webPages : []} />
           </div>
 
           {/* Answer */}
@@ -135,7 +137,7 @@ export default function ChatPage() {
                   remarkPlugins={[remarkGfm]}
                   className="prose pb-24"
                 >
-                  {/* {response} */}
+                  {response.AIgenerated}
                 </ReactMarkdown>
               )}
             </div>
@@ -146,7 +148,7 @@ export default function ChatPage() {
         {/* Right Column */}
         <div className="col-span-4 mx-8">
           <div className='sticky top-headerHeight z-10 mt-md flex max-h-[calc(100vh_-var(--header-height))] flex-col pt-md' >
-            <ImageGrid loading={isLoading} images={response?.searchEngine?.images ? response.searchEngine.images : {}} />
+            <ImageGrid loading={isLoading} images={response?.searchEngine?.images ? response.searchEngine.images : []} />
           </div>
         </div>
 

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React from 'react';
 
 interface ImageGridProps {
@@ -29,7 +30,7 @@ export default function ImageGrid({ loading, images = [] }: ImageGridProps) {
                         <div
                             key={image.url}
                             className={`${index === 0 ? 'col-span-1 md:col-span-2 h-48' : 'col-span-1 h-24'
-                                } bg-gray-800 w-full rounded-lg relative overflow-hidden`}
+                                } bg-darkGray w-full rounded-lg relative overflow-hidden`}
                         >
                             <img
                                 src={image.thumbnailUrl}
