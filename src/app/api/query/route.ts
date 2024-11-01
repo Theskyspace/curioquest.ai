@@ -1,44 +1,87 @@
 import { NextRequest, NextResponse } from "next/server";
-import { CohereClientV2 } from "cohere-ai";
-import * as dotenv from "dotenv";
+import { BingSearchService } from "@/services/BingSearchService";
+import { CohereService } from "@/services/CohereSerivce";
 
-dotenv.config();
+// const cohere = new CohereClientV2({
+//   token: process.env.COHERE_API_KEY as string,
+// });
 
-const cohere = new CohereClientV2({
-  token: process.env.COHERE_API_KEY as string,
-});
+const bingService = new BingSearchService(process.env.BING_API_KEY || "");
+const cohereService = new CohereService();
 
 export async function POST(request: NextRequest) {
   const { query } = await request.json();
   console.log("Query:", query);
 
-  try {
-    const response = await cohere.chat({
-      model: "command-r-plus",
-      messages: [
-        // {
-        //   role: "system",
-        //   content: `Use the context to answer user queries and remeber you are genz bot So don't be too formal`,
-        // },
-        // {
-        //   role: "assistant",
-        //   content: "You are a savage version of perpexility build by Akash",
-        // },
-        {
-          role: "user",
-          content: query,
-        },
-      ],
-    });
-    console.log("Response:", response);
-    console.log("Answer:", response.message?.content?.[0]?.text);
-    return NextResponse.json({
-      answer: response.message?.content?.[0]?.text ?? "No response",
-    });
-  } catch (error) {
-    console.error("Error with Cohere API:", error);
-    return NextResponse.error();
+  interface FinalResponse {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    searchEngine?: any; // Replace 'any' with a more specific type if possible
+    AIgenerated?: string;
+    context?: string[];
   }
+
+  const finalResponse: FinalResponse = {};
+
+  try {
+    const bingResponse = await bingService.search(query);
+    finalResponse.searchEngine = bingResponse;
+  } catch (error) {
+    console.error("Bing API Error:", error);
+    return NextResponse.json(
+      { error: "Our Web Searching Partner failed! Try again later" },
+      { status: 500 }
+    );
+  }
+
+  const context = finalResponse.searchEngine?.webPages?.map(
+    (result: { name: string; url: string; snippet: string }, index: number) =>
+      `${index + 1}. ${result.name} - ${result.snippet}`
+  );
+  finalResponse.context = finalResponse.searchEngine?.webPages;
+
+  // Form the answer using the context with the cohere API
+  try {
+    const generatedAnswer = await cohereService.generateAnswer(
+      context.join("\n"),
+      query
+    );
+    finalResponse.AIgenerated = generatedAnswer;
+  } catch (error) {
+    console.error("Cohere API Error:", error);
+    return NextResponse.json(
+      { error: "Our AI Partner failed! Try again later" },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json(finalResponse);
+
+  // try {
+  //   const response = await cohere.chat({
+  //     model: "command-r-plus",
+  //     messages: [
+  //       // {
+  //       //   role: "system",
+  //       //   content: `Use the context to answer user queries and remeber you are genz bot So don't be too formal`,
+  //       // },
+  //       // {
+  //       //   role: "assistant",
+  //       //   content: "You are a savage version of perpexility build by Akash",
+  //       // },
+  //       {
+  //         role: "user",
+  //         content: query,
+  //       },
+  //     ],
+  //   });
+  //   console.log("Response:", response);
+  //   console.log("Answer:", response.message?.content?.[0]?.text);
+  //   return NextResponse.json({
+  //     answer: response.message?.content?.[0]?.text ?? "No response",
+  //   });
+  // } catch (error) {
+  //   console.error("Error with Cohere API:", error);
+  //   return NextResponse.error();
 }
 
 // Stream Response

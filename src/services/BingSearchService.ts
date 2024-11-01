@@ -1,5 +1,5 @@
 import axios from "axios";
-
+// TODO: Add related searches in the response object.
 export class BingSearchService {
   private apiKey: string;
 
@@ -16,16 +16,31 @@ export class BingSearchService {
           headers: { "Ocp-Apim-Subscription-Key": this.apiKey },
         }
       );
-      return response.data.webPages.value.map(
-        (item: { name: string; url: string; snippet: string }) => ({
-          name: item.name,
-          url: item.url,
-          snippet: item.snippet,
-        })
-      );
+      return {
+        images:
+          response.data.images?.value?.map(
+            (item: {
+              name: string;
+              contentUrl: string;
+              thumbnailUrl: string;
+            }) => ({
+              name: item.name,
+              url: item.contentUrl,
+              thumbnailUrl: item.thumbnailUrl,
+            })
+          ) || [],
+        webPages:
+          response.data.webPages?.value?.map(
+            (item: { name: string; url: string; snippet: string }) => ({
+              name: item.name,
+              url: item.url,
+              snippet: item.snippet,
+            })
+          ) || [],
+      };
     } catch (error) {
       console.error("Bing Search API error:", error);
-      throw new Error("Failed to fetch search results");
+      throw new Error(`Failed to fetch search results ${error}`);
     }
   }
 }

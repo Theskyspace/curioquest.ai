@@ -1,17 +1,21 @@
 
 "use client"
 
+import ImageGrid from '@/components/imageGrid';
 import HorizontalGrid from '@/components/sources';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
 import ReactMarkdown from 'react-markdown';
+
 import remarkGfm from 'remark-gfm';
+
 
 export default function ChatPage() {
   const [query, setQuery] = useState<string | null>(null);
   const [followup, setFollowup] = useState<string | null>(null);
-  const [response, setResponse] = useState<string | null>("");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [response, setResponse] = useState<any>({});
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -88,10 +92,11 @@ export default function ChatPage() {
         setQuery(storedQuery);
         try {
           const res = await axios.post('/api/query', { query: storedQuery });
-          setResponse(res.data.answer);
+          setResponse(res.data);
           setIsLoading(false);
+          console.log("Response:", res.data);
         } catch (error) {
-          console.error('Error fetching response:', error);
+          console.log(error);
           setResponse('An error occurred while fetching the response.');
           setIsLoading(false);
         }
@@ -101,9 +106,10 @@ export default function ChatPage() {
     fetchInitialResponse();
   }, []); // Empty array ensures this only runs once on mount
 
+
   return (
 
-    <div className='md:px-12 pt-12 lg:px-44'>
+    <div className='md:px-12 pt-12 lg:px-44 pb-24'>
       <div className="md:grid grid-cols-12 text-text gap-xl min-h-screen  animate-fadeIn">
         <div className="col-span-8">
           {/* Heading */}
@@ -113,7 +119,7 @@ export default function ChatPage() {
           {/* Sources */}
           <div className="p-4 rounded-lg">
             <h2 className="text-xl mb-2">Sources</h2>
-            <HorizontalGrid loading={isLoading} />
+            <HorizontalGrid loading={isLoading} source_items={response?.searchEngine?.webPages ? response.searchEngine.webPages : []} />
           </div>
 
           {/* Answer */}
@@ -129,9 +135,9 @@ export default function ChatPage() {
               ) : (
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
-                  className="prose pb-24"
+                  className="prose pb-2"
                 >
-                  {response}
+                  {response.AIgenerated}
                 </ReactMarkdown>
               )}
             </div>
@@ -142,16 +148,7 @@ export default function ChatPage() {
         {/* Right Column */}
         <div className="col-span-4 mx-8">
           <div className='sticky top-headerHeight z-10 mt-md flex max-h-[calc(100vh_-var(--header-height))] flex-col pt-md' >
-
-            <div className="grid grid-cols-1 gap-4">
-
-              {[...Array(5)].map((_, index) => (
-                <div key={index} className="col-span-1 bg-darkGray h-24 w-48 rounded-lg relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-darkGray via-black/5 to-darkGray animate-shimmer"></div>
-                </div>
-              ))}
-            </div>
-
+            <ImageGrid loading={isLoading} images={response?.searchEngine?.images ? response.searchEngine.images : []} />
           </div>
         </div>
 
@@ -180,4 +177,3 @@ export default function ChatPage() {
     </div>
   );
 }
-

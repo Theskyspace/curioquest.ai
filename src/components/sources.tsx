@@ -1,10 +1,12 @@
+/* eslint-disable @next/next/no-img-element */
 import React from 'react';
 
 interface HorizontalGridProps {
     loading: boolean;
+    source_items?: { name: string; url: string; snippet: string }[];
 }
 
-export default function HorizontalGrid({ loading }: HorizontalGridProps) {
+export default function HorizontalGrid({ loading, source_items = [] }: HorizontalGridProps) {
     if (loading) {
         return (
             <div className="w-full h-full">
@@ -20,11 +22,13 @@ export default function HorizontalGrid({ loading }: HorizontalGridProps) {
         );
     }
 
+
     return (
+
         <div className="w-full h-full">
             <div className="grid grid-flow-col auto-cols-max gap-2 overflow-x-auto scrollbar-hide h-full">
-                {/* Container for each item */}
-                {[...Array(4)].map((_, index) => (
+
+                {source_items?.slice(0, 5).map((source_item: { name: string; url: string; snippet: string }, index: number) => (
                     <div
                         key={index}
                         className="flex flex-col justify-between p-3 rounded-lg shadow-md bg-darkGray min-w-[200px] h-full w-48 text-white"
@@ -32,21 +36,22 @@ export default function HorizontalGrid({ loading }: HorizontalGridProps) {
                         {/* Title */}
                         <div className="flex-1 mb-1">
                             <h3 className="text-sm line-clamp-2 leading-tight">
-                                Some random saying from source
+                                {source_item.name}
                             </h3>
                         </div>
 
                         {/* Source and Logo */}
                         <div className="flex items-center justify-between mt-2">
                             {/* Logo */}
-                            <div className="w-5 h-5 flex-shrink-0 bg-blue-200 rounded-full flex items-center justify-center">
-                                {/* Add logo or icon inside here */}
+                            <div className="w-4 h-4 flex-shrink-0 bg-blue-200 rounded-full flex items-center justify-center">
+                                <img src={`https://www.google.com/s2/favicons?domain=${source_item.url}`}
+                                    alt="Source logo" className="object-cover w-full h-full  rounded-full" />
                             </div>
 
                             {/* Source Text */}
                             <div className="ml-2 flex-1">
                                 <h3 className="text-xs text-gray-400 truncate">
-                                    theskyspace.tech
+                                    {source_item.url.split('/')[2]}
                                 </h3>
                             </div>
                         </div>
@@ -55,4 +60,5 @@ export default function HorizontalGrid({ loading }: HorizontalGridProps) {
             </div>
         </div>
     );
+
 }
