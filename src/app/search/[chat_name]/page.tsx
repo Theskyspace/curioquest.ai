@@ -1,17 +1,20 @@
 
 "use client"
 
+import ImageGrid from '@/components/imageGrid';
 import HorizontalGrid from '@/components/sources';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
 import ReactMarkdown from 'react-markdown';
+import { toast } from 'react-toastify';
 import remarkGfm from 'remark-gfm';
+
 
 export default function ChatPage() {
   const [query, setQuery] = useState<string | null>(null);
-  const [followup, setFollowup] = useState<string | null>(null);
-  const [response, setResponse] = useState<string | null>("");
+  const [followup, setFollowup] = useState<any | null>({});
+  const [response, setResponse] = useState<any | null>({});
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -88,10 +91,11 @@ export default function ChatPage() {
         setQuery(storedQuery);
         try {
           const res = await axios.post('/api/query', { query: storedQuery });
-          setResponse(res.data.answer);
+          setResponse(res.data);
           setIsLoading(false);
+          console.log("Response:", res.data);
         } catch (error) {
-          console.error('Error fetching response:', error);
+          toast.error('Failed to fetch answer from Cohere');
           setResponse('An error occurred while fetching the response.');
           setIsLoading(false);
         }
@@ -131,7 +135,7 @@ export default function ChatPage() {
                   remarkPlugins={[remarkGfm]}
                   className="prose pb-24"
                 >
-                  {response}
+                  {/* {response} */}
                 </ReactMarkdown>
               )}
             </div>
@@ -142,16 +146,7 @@ export default function ChatPage() {
         {/* Right Column */}
         <div className="col-span-4 mx-8">
           <div className='sticky top-headerHeight z-10 mt-md flex max-h-[calc(100vh_-var(--header-height))] flex-col pt-md' >
-
-            <div className="grid grid-cols-1 gap-4">
-
-              {[...Array(5)].map((_, index) => (
-                <div key={index} className="col-span-1 bg-darkGray h-24 w-48 rounded-lg relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-darkGray via-black/5 to-darkGray animate-shimmer"></div>
-                </div>
-              ))}
-            </div>
-
+            <ImageGrid loading={isLoading} images={response?.searchEngine?.images ? response.searchEngine.images : {}} />
           </div>
         </div>
 

@@ -1,44 +1,59 @@
 import { NextRequest, NextResponse } from "next/server";
-import { CohereClientV2 } from "cohere-ai";
-import * as dotenv from "dotenv";
+import { BingSearchService } from "@/services/BingSearchService";
+// import { CohereService } from "@/services/CohereSerivce";
 
-dotenv.config();
+// const cohere = new CohereClientV2({
+//   token: process.env.COHERE_API_KEY as string,
+// });
 
-const cohere = new CohereClientV2({
-  token: process.env.COHERE_API_KEY as string,
-});
+const bingService = new BingSearchService(process.env.BING_API_KEY || "");
+// const cohereService = new CohereService();
 
 export async function POST(request: NextRequest) {
   const { query } = await request.json();
   console.log("Query:", query);
+  // TODO: Define the structure of the final response
+  let finalResponse: any = {};
 
   try {
-    const response = await cohere.chat({
-      model: "command-r-plus",
-      messages: [
-        // {
-        //   role: "system",
-        //   content: `Use the context to answer user queries and remeber you are genz bot So don't be too formal`,
-        // },
-        // {
-        //   role: "assistant",
-        //   content: "You are a savage version of perpexility build by Akash",
-        // },
-        {
-          role: "user",
-          content: query,
-        },
-      ],
-    });
-    console.log("Response:", response);
-    console.log("Answer:", response.message?.content?.[0]?.text);
-    return NextResponse.json({
-      answer: response.message?.content?.[0]?.text ?? "No response",
-    });
+    const bingResponse = await bingService.search(query);
+    finalResponse.searchEngine = bingResponse;
   } catch (error) {
-    console.error("Error with Cohere API:", error);
-    return NextResponse.error();
+    console.error("Bing API Error:", error);
+    return NextResponse.json(
+      { error: "Our Web Searching Partner failed! Try again later" },
+      { status: 500 }
+    );
   }
+  console.log("Final Response:", finalResponse);
+  return NextResponse.json(finalResponse);
+
+  // try {
+  //   const response = await cohere.chat({
+  //     model: "command-r-plus",
+  //     messages: [
+  //       // {
+  //       //   role: "system",
+  //       //   content: `Use the context to answer user queries and remeber you are genz bot So don't be too formal`,
+  //       // },
+  //       // {
+  //       //   role: "assistant",
+  //       //   content: "You are a savage version of perpexility build by Akash",
+  //       // },
+  //       {
+  //         role: "user",
+  //         content: query,
+  //       },
+  //     ],
+  //   });
+  //   console.log("Response:", response);
+  //   console.log("Answer:", response.message?.content?.[0]?.text);
+  //   return NextResponse.json({
+  //     answer: response.message?.content?.[0]?.text ?? "No response",
+  //   });
+  // } catch (error) {
+  //   console.error("Error with Cohere API:", error);
+  //   return NextResponse.error();
 }
 
 // Stream Response
