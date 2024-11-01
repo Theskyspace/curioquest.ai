@@ -107,9 +107,10 @@ export default function ChatPage() {
     fetchInitialResponse();
   }, []); // Empty array ensures this only runs once on mount
 
+
   return (
 
-    <div className='md:px-12 pt-12 lg:px-44'>
+    <div className='md:px-12 pt-12 lg:px-44 pb-24'>
       <div className="md:grid grid-cols-12 text-text gap-xl min-h-screen  animate-fadeIn">
         <div className="col-span-8">
           {/* Heading */}
@@ -135,7 +136,7 @@ export default function ChatPage() {
               ) : (
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
-                  className="prose pb-24"
+                  className="prose pb-2"
                 >
                   {response.AIgenerated}
                 </ReactMarkdown>
@@ -177,4 +178,3 @@ export default function ChatPage() {
     </div>
   );
 }
-

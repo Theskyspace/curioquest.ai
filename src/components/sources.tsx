@@ -24,7 +24,6 @@ export default function HorizontalGrid({ loading, source_items = [] }: Horizonta
 
 
     return (
-        console.log(source_items),
 
         <div className="w-full h-full">
             <div className="grid grid-flow-col auto-cols-max gap-2 overflow-x-auto scrollbar-hide h-full">
