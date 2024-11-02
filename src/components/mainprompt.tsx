@@ -29,6 +29,7 @@ export default function MainPrompt() {
       try {
         sessionStorage.setItem('searchQuery', query);
         router.push('/search/' + makeChatId(query));
+        console.log('Navigating to:', '/search/' + makeChatId(query));
       } catch (error) {
         console.error('Error fetching result:', error);
       } finally {
@@ -67,6 +68,30 @@ export default function MainPrompt() {
             <FiArrowRight className="w-5 h-5" />
           </button>
         </div>
+      </div>
+      <div className="flex flex-col md:flex-row md:flex-wrap gap-4 mt-8 w-full max-w-xl">
+        {[
+          { suggestion: 'How does Imtiaz Ali think?', emoji: "🍿" },
+          { suggestion: 'Taxation In India', emoji: "💰" },
+          {
+            suggestion: 'How to make dal makhni', emoji: "🥗"
+          },
+          { suggestion: 'What\'s Limechat?', emoji: "⛩️" }
+        ].map((suggestion, index) => (
+          <div
+            key={index}
+            className="p-2 border bg-primary border-border rounded-xl shadow-md flex items-center cursor-pointer hover:bg-secondary transition-colors w-full md:w-[calc(50%-0.5rem)]"
+            onClick={() => {
+              setQuery(suggestion.suggestion);
+              handleSearch();
+            }}
+          >
+            <div className="bg-background rounded-xl flex items-center justify-center mr-4 w-8 h-8">
+              <span role="img" aria-label="emoji">{suggestion.emoji}</span>
+            </div>
+            <p className="text-text text-sm">{suggestion.suggestion}</p>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -78,6 +78,7 @@ export default function ChatPage() {
       <div className="min-h-screen animate-fadeIn">
 
         {/* Loop over each question and response pair */}
+        {/* TODO: Modularixe this element */}
         {responses.map((responseItem, index) => (
           <div key={index} className="md:grid grid-cols-12 text-text gap-xl mb-12">
             <div className="col-span-8">
