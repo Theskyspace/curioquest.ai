@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 import React from 'react';
 
-interface HorizontalGridProps {
+interface SourceGridProps {
     loading: boolean;
     source_items?: { name: string; url: string; snippet: string }[];
 }
 
-export default function HorizontalGrid({ loading, source_items = [] }: HorizontalGridProps) {
+export default function SourceGrid({ loading, source_items = [] }: SourceGridProps) {
     if (loading) {
         return (
             <div className="w-full h-full">
@@ -31,7 +31,7 @@ export default function HorizontalGrid({ loading, source_items = [] }: Horizonta
                 {source_items?.slice(0, 5).map((source_item: { name: string; url: string; snippet: string }, index: number) => (
                     <div
                         key={index}
-                        className="flex flex-col justify-between p-3 rounded-lg shadow-md bg-darkGray min-w-[200px] h-full w-48 text-white"
+                        className="flex flex-col justify-between p-3 rounded-lg shadow-md bg-darkGray min-w-[200px] h-full w-48 text-white overflow-hidden"
                     >
                         {/* Title */}
                         <div className="flex-1 mb-1">

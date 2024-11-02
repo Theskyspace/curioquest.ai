@@ -29,13 +29,14 @@ export default function ImageGrid({ loading, images = [] }: ImageGridProps) {
                         <div
                             key={image.url}
                             className={`${index === 0 ? 'md:col-span-2 md:h-48' : 'h-24'
-                                } w-full bg-darkGray rounded-lg relative overflow-hidden`}
+                                } w-full bg-darkGray rounded-lg relative overflow-hidden group`}
                         >
                             <img
                                 src={image.thumbnailUrl}
                                 alt={image.name}
-                                className="object-cover w-full h-full"
+                                className="object-cover w-full h-full transition-transform duration-300 ease-in-out transform group-hover:scale-110"
                             />
+                            <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black opacity-50"></div>
                         </div>
                     ))}
                 </div>
