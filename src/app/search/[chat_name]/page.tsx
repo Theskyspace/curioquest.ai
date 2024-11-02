@@ -15,9 +15,12 @@ export default function ChatPage() {
   const [query, setQuery] = useState<string | null>(null);
   const [followup, setFollowup] = useState<string | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [response, setResponse] = useState<any>({});
+  const [searchContext, setSearchContext] = useState<any>({});
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isContextLoading, setIsContextLoading] = useState<boolean>(false);
+  const [isAIwaiting, setIsAIwaiting] = useState<boolean>(true);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [AIresponse, setAIresponse] = useState<any>({});
 
   useEffect(() => {
     if (textAreaRef.current) {
@@ -91,42 +94,63 @@ export default function ChatPage() {
       if (storedQuery) {
         setQuery(storedQuery);
         try {
-          const res = await axios.post('/api/query', { query: storedQuery });
-          setResponse(res.data);
-          setIsLoading(false);
+          const res = await axios.post('/api/get_context', { query: storedQuery });
+          setSearchContext(res.data);
+          setIsContextLoading(false);
           console.log("Response:", res.data);
         } catch (error) {
           console.log(error);
-          setResponse('An error occurred while fetching the response.');
-          setIsLoading(false);
+          setSearchContext('An error occurred while fetching the response.');
+          setIsContextLoading(false);
         }
       }
     };
-    setIsLoading(true);
+    setIsContextLoading(true);
     fetchInitialResponse();
   }, []); // Empty array ensures this only runs once on mount
 
+  useEffect(() => {
+    const fetchInitialResponse = async () => {
+      const storedQuery = sessionStorage.getItem('searchQuery');
+      if (storedQuery) {
+        setQuery(storedQuery);
+        try {
+          const res = await axios.post('/api/get_answer', { query: storedQuery, context: searchContext.context });
+          setAIresponse(res.data);
+          setIsAIwaiting(false);
+          console.log("Response:", res.data);
+        } catch (error) {
+          console.log(error);
+          setAIresponse('An error occurred while fetching the response.');
+          setIsAIwaiting(false);
+        }
+      }
+    };
+    fetchInitialResponse();
+  }, [searchContext]); // Empty array ensures this only runs once on mount
+
+
 
   return (
-
-    <div className='md:px-12 pt-12 lg:px-44 pb-24'>
+    console.log("Is AI waiting : ", isAIwaiting),
+    <div className='md:px-12 pt-12 lg:px-44 pb-24' >
       <div className="md:grid grid-cols-12 text-text gap-xl min-h-screen  animate-fadeIn">
         <div className="col-span-8">
           {/* Heading */}
           <h1 className="text-3xl">{query}</h1>
-          {isLoading}
+          {isContextLoading}
 
           {/* Sources */}
           <div className="p-4 rounded-lg">
             <h2 className="text-xl mb-2">Sources</h2>
-            <HorizontalGrid loading={isLoading} source_items={response?.searchEngine?.webPages ? response.searchEngine.webPages : []} />
+            <HorizontalGrid loading={isContextLoading} source_items={searchContext?.searchEngine?.webPages ? searchContext.searchEngine.webPages : []} />
           </div>
 
           {/* Answer */}
           <div className="p-4  rounded-lg  ">
             <h2 className="text-xl mb-2">Answer</h2>
             <div className="text-text ">
-              {isLoading ? (
+              {isAIwaiting ? (
                 <div className="space-y-2">
                   {[...Array(3)].map((_, index) => (
                     <div key={index} className="h-4 bg-darkGray rounded animate-pulse"></div>
@@ -137,7 +161,7 @@ export default function ChatPage() {
                   remarkPlugins={[remarkGfm]}
                   className="prose pb-2"
                 >
-                  {response.AIgenerated}
+                  {AIresponse.answer}
                 </ReactMarkdown>
               )}
             </div>
@@ -148,7 +172,7 @@ export default function ChatPage() {
         {/* Right Column */}
         <div className="col-span-4 mx-8">
           <div className='sticky top-headerHeight z-10 mt-md flex max-h-[calc(100vh_-var(--header-height))] flex-col pt-md' >
-            <ImageGrid loading={isLoading} images={response?.searchEngine?.images ? response.searchEngine.images : []} />
+            <ImageGrid loading={isContextLoading} images={searchContext?.searchEngine?.images ? searchContext.searchEngine.images : []} />
           </div>
         </div>
 
@@ -174,6 +198,6 @@ export default function ChatPage() {
         </div>
         <span></span>
       </div>
-    </div>
+    </div >
   );
 }
