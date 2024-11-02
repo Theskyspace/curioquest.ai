@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 "use client"
 
@@ -7,19 +8,16 @@ import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
 import ReactMarkdown from 'react-markdown';
-
 import remarkGfm from 'remark-gfm';
 
 
 export default function ChatPage() {
   const [query, setQuery] = useState<string | null>(null);
   const [followup, setFollowup] = useState<string | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [searchContext, setSearchContext] = useState<any>({});
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [isContextLoading, setIsContextLoading] = useState<boolean>(false);
   const [isAIwaiting, setIsAIwaiting] = useState<boolean>(true);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [AIresponse, setAIresponse] = useState<any>({});
 
   useEffect(() => {
@@ -105,8 +103,10 @@ export default function ChatPage() {
         }
       }
     };
-    setIsContextLoading(true);
-    fetchInitialResponse();
+    if (!isContextLoading) {
+      setIsContextLoading(true);
+      fetchInitialResponse();
+    }
   }, []); // Empty array ensures this only runs once on mount
 
   useEffect(() => {
@@ -126,14 +126,15 @@ export default function ChatPage() {
         }
       }
     };
-    fetchInitialResponse();
-  }, [searchContext]); // Empty array ensures this only runs once on mount
+    if (!isContextLoading && searchContext?.context) {
+      fetchInitialResponse();
+    }
+  }, [searchContext, isContextLoading]); // Empty array ensures this only runs once on mount
 
 
 
   return (
-    console.log("Is AI waiting : ", isAIwaiting),
-    <div className='md:px-12 pt-12 lg:px-44 pb-24' >
+    <div className='md:px-12 pt-12 p-4 lg:px-44 pb-24' >
       <div className="md:grid grid-cols-12 text-text gap-xl min-h-screen  animate-fadeIn">
         <div className="col-span-8">
           {/* Heading */}
@@ -141,13 +142,13 @@ export default function ChatPage() {
           {isContextLoading}
 
           {/* Sources */}
-          <div className="p-4 rounded-lg">
+          <div className="rounded-lg">
             <h2 className="text-xl mb-2">Sources</h2>
             <HorizontalGrid loading={isContextLoading} source_items={searchContext?.searchEngine?.webPages ? searchContext.searchEngine.webPages : []} />
           </div>
 
           {/* Answer */}
-          <div className="p-4  rounded-lg  ">
+          <div className="rounded-lg  ">
             <h2 className="text-xl mb-2">Answer</h2>
             <div className="text-text ">
               {isAIwaiting ? (

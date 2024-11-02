@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  finalResponse.context = finalResponse.searchEngine?.webPages;
+  finalResponse.context = finalResponse.searchEngine?.webPages?.slice(0, 5);
   return NextResponse.json(finalResponse);
 
   // try {
