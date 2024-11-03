@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import React from 'react';
+import { toast } from 'sonner';
 
 interface ImageGridProps {
     loading: boolean;
@@ -43,6 +44,7 @@ export default function ImageGrid({ loading, images = [] }: ImageGridProps) {
 
             );
         } catch (e) {
+            toast.error('Failed to load images');
             console.log(e);
         }
     }

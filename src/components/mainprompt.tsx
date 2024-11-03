@@ -2,6 +2,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FiArrowRight } from 'react-icons/fi';
+import { toast } from 'sonner';
+
 
 export default function MainPrompt() {
   const [query, setQuery] = useState<string>('');
@@ -17,7 +19,6 @@ export default function MainPrompt() {
 
   useEffect(() => {
     if (textAreaRef.current) {
-
       textAreaRef.current.style.height = 'auto';
       textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
     }
@@ -29,9 +30,9 @@ export default function MainPrompt() {
       try {
         sessionStorage.setItem('searchQuery', query);
         router.push('/search/' + makeChatId(query));
-        console.log('Navigating to:', '/search/' + makeChatId(query));
       } catch (error) {
-        console.error('Error fetching result:', error);
+        toast.error('Failed to navigate to search page');
+        console.log('Failed to navigate to search page', error);
       } finally {
         setLoading(false);
       }

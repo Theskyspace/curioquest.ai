@@ -9,11 +9,10 @@ import { FaStop } from 'react-icons/fa6';
 import { FiArrowRight } from 'react-icons/fi';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { toast } from 'sonner';
 
 export default function ChatPage() {
-  // const [query, setQuery] = useState<string | null>(null);
   const [followup, setFollowup] = useState<string | null>(sessionStorage.getItem('searchQuery'));
-  // const [searchContext, setSearchContext] = useState<any>({});
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [isContextLoading, setIsContextLoading] = useState<boolean>(false);
   const [responses, setResponses] = useState<
@@ -42,6 +41,7 @@ export default function ChatPage() {
         console.log("Context Response:", res.data);
       } catch (error) {
         console.log(error);
+        toast.error('Failed to get context');
         setIsContextLoading(false);
         return;
       }
@@ -68,6 +68,7 @@ export default function ChatPage() {
           )
         );
       } catch (error) {
+        toast.error("Failed to fetch answer.");
         console.log(error);
       }
     }
