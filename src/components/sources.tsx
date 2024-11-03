@@ -31,7 +31,8 @@ export default function SourceGrid({ loading, source_items = [] }: SourceGridPro
                 {source_items?.slice(0, 5).map((source_item: { name: string; url: string; snippet: string }, index: number) => (
                     <div
                         key={index}
-                        className="flex flex-col justify-between p-3 rounded-lg shadow-md bg-darkGray min-w-[200px] h-full w-48 text-white overflow-hidden"
+                        className="flex flex-col justify-between p-3 rounded-lg shadow-md bg-darkGray min-w-[200px] h-full w-48 text-white overflow-hidden cursor-pointer"
+                        onClick={() => window.open(source_item.url, '_blank')}
                     >
                         {/* Title */}
                         <div className="flex-1 mb-1">

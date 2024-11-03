@@ -71,7 +71,7 @@ export default function MainPrompt() {
       </div>
       <div className="flex flex-col md:flex-row md:flex-wrap gap-4 mt-8 w-full max-w-xl">
         {[
-          { suggestion: 'How does Imtiaz Ali think?', emoji: "🍿" },
+          { suggestion: 'Why people love Leh?', emoji: "🗻" },
           { suggestion: 'Taxation In India', emoji: "💰" },
           {
             suggestion: 'How to make dal makhni', emoji: "🥗"
