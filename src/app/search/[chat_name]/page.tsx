@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import ImageGrid from '@/components/imageGrid';
@@ -69,7 +68,6 @@ export default function ChatPage() {
 
   };
 
-
   handleFollowup();
 
   return (
@@ -101,9 +99,9 @@ export default function ChatPage() {
                   ) : (
                     <ReactMarkdown
                       remarkPlugins={[remarkGfm]}
-                      children={responseItem.answer || 'Failed to fetch answer'}
-                    />
-                  )}
+                      className="prose"
+                    >{responseItem.answer || 'Failed to fetch answer'}</ReactMarkdown>
+
                 </div>
               </div>
             </div>
