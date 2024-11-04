@@ -1,17 +1,44 @@
 import React from 'react';
 
 interface CitationBubbleProps {
-    number: number[];
+    numbers: number[];  // Array of citation numbers to display
+    sources: { [key: number]: { url: string; snippet: string } };  // Mapping of citation number to source info
 }
 
-const CitationBubble: React.FC<CitationBubbleProps> = ({ number }) => {
+function getSiteName(url: string) {
+    try {
+        const parsedUrl = new URL(url);
+        let hostname = parsedUrl.hostname;
+        hostname = hostname.replace(/^(www\.|m\.|blog\.)*/, '');
+        const domainParts = hostname.split('.');
+        if (domainParts.length > 2) {
+            hostname = domainParts.slice(-2).join('.');
+        }
+
+        return hostname;
+    } catch (error) {
+        console.error('Invalid URL:', error);
+        return null;
+    }
+}
+
+
+const CitationBubble: React.FC<CitationBubbleProps> = ({ numbers, sources }) => {
+    console.log("Sources", sources)
     return (
-        <span className="relative group">
-            <sup className="cursor-pointer text-blue-500">[{number}]</sup>
-            {/* <div className="absolute bottom-8 left-0 z-10 hidden w-64 p-2 bg-white border rounded shadow-lg group-hover:block">
-                <p className="text-xs text-gray-500">Author, Date, Source</p>
-                <p className="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            </div> */}
+        <span className="citation-bubble">
+            {numbers.map((number) => (
+                <a
+                    key={number}
+                    href={sources[number]?.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="citation-number"
+                    data-tooltip={sources[number]?.snippet}
+                >
+                    {getSiteName(sources[number]?.url)}
+                </a>
+            ))}
         </span>
     );
 };

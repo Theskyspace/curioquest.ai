@@ -19,22 +19,13 @@ export class CohereService {
         messages: [
           {
             role: "system",
-            content: `You can use the text provided below to help you answer. If you are not confident with your answer, say 'I don't know' then stop.
-
-    You are not allowed to add links from sites that are not mentioned in the Sources.
-
-    Citations must replace the keyword in the source text. Do not cite like "(Source: )".`,
-          },
-          {
-            role: "assistant",
-            content: `Use Markdown format and format for inline citations. 
-              Each citation number should appear directly after the referenced point.
-              Aim for a response that is both clear and well-cited. Ensure every statement is cited.`,
+            content: `You are an informative assistant. Provide answers with inline citations as footnotes, using Markdown's footnote syntax ({1}, {2}, etc.). For each paragraph, include at least two citations wherever applicable, and place footnotes directly after the relevant sentences or statements. Summarize the content without deviating from the provided context.`,
           },
           {
             role: "user",
-            content: `Answer the question '${query}?'.
-              SOURCE ${context}`,
+            content: `Here is the question: ${query}
+        Use the following context for your answer:
+        ${context}`,
           },
         ],
       });
