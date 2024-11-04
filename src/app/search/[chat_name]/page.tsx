@@ -1,3 +1,4 @@
+
 "use client";
 
 import ImageGrid from '@/components/imageGrid';
@@ -14,9 +15,16 @@ export default function ChatPage() {
   const [followup, setFollowup] = useState<string | null>(sessionStorage.getItem('searchQuery'));
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [isContextLoading, setIsContextLoading] = useState<boolean>(false);
-  const [responses, setResponses] = useState<
-    { question: string; answer: string | null; context: any; isLoading: boolean }[]
-  >([]);
+
+  interface ResponseItem {
+    question: string;
+    answer: string | null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    context: any;
+    isLoading: boolean;
+  }
+
+  const [responses, setResponses] = useState<ResponseItem[]>([]);
 
 
 
