@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import ImageGrid from '@/components/imageGrid';
 import HorizontalGrid from '@/components/sources';
 import axios from 'axios';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { FaStop } from 'react-icons/fa6';
 import { FiArrowRight } from 'react-icons/fi';
 import ReactMarkdown from 'react-markdown';
@@ -20,17 +19,10 @@ export default function ChatPage() {
   >([]);
 
 
-  useEffect(() => {
-    handleFollowup();
-  }, []); // Only runs once on mount
-
 
   const handleFollowup = async () => {
-
     if (followup) {
-
       const newResponse = { question: followup, answer: null, context: null, isLoading: true };
-
       setFollowup("");
       let context = null;
       try {
@@ -60,6 +52,7 @@ export default function ChatPage() {
           query: followup,
           context: context.context
         });
+        console.log("Answer Response:", res.data);
         setResponses((prevResponses) =>
           prevResponses.map((item, index) =>
             index === prevResponses.length - 1 // Update the latest response
@@ -72,9 +65,13 @@ export default function ChatPage() {
         console.log(error);
       }
     }
+
   };
 
+  handleFollowup();
+
   return (
+
     <div className='md:px-12 pt-12 p-4 lg:px-44 pb-24'>
       <div className="min-h-screen animate-fadeIn">
 
@@ -100,9 +97,10 @@ export default function ChatPage() {
                       ))}
                     </div>
                   ) : (
-                    <ReactMarkdown remarkPlugins={[remarkGfm]} className="prose pb-2">
-                      {responseItem.answer}
-                    </ReactMarkdown>
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      className="prose"
+                    >{responseItem.answer || 'Failed to fetch answer'}</ReactMarkdown>
                   )}
                 </div>
               </div>
@@ -110,7 +108,7 @@ export default function ChatPage() {
 
             <div className="col-span-4 mx-8">
               <div className='sticky top-headerHeight z-10 mt-md flex max-h-[calc(100vh_-var(--header-height))] flex-col pt-md'>
-                <ImageGrid loading={isContextLoading} images={responseItem.context?.searchEngine?.images || []} />
+                <ImageGrid loading={isContextLoading} images={responseItem.context?.searchEngine?.images || []} query={responses[responses.length - 1].question} />
               </div>
             </div>
           </div>
@@ -134,9 +132,9 @@ export default function ChatPage() {
               }
             }}
           />
-          <div className="flex justify-center items-end">
+          <div className="flex justify-center items-end bg-cyan-600 hover:bg-cyan-700 rounded-full">
             <button
-              className={`p-2 text-text rounded-full shadow focus:outline-none w-10 h-10 flex items-center justify-center`}
+              className={`p-2 text-text rounded-full shadow focus:outline-none w-10 h-10 flex items-center justify-center `}
               onClick={handleFollowup}
               disabled={!followup || followup.length === 0 || responses[responses.length - 1]?.isLoading}
             >

@@ -10,29 +10,35 @@ export class CohereService {
   }
 
   async generateAnswer(context: string, query: string) {
-    console.log("CohereService.generateAnswer:", context, query);
+    console.log("********* CohereService.generateAnswer:", context, query);
     try {
       const response = await this.cohere.chat({
         model: "command-r-plus",
-        temperature: 0.5, // Lower temperature for more focused responses
-        p: 0.85, // Slightly adjust for controlled diversity
+        temperature: 0.5,
+        p: 0.85,
         messages: [
           {
             role: "system",
-            content:
-              "You are an informative assistant tasked with providing answers based on factual information. Always cite your sources using inline references, and be clear, concise, and professional in your response If possible make ansers atlaest 500 words.",
+            content: `You can use the text provided below to help you answer. If you are not confident with your answer, say 'I don't know' then stop.
+
+    You are not allowed to add links from sites that are not mentioned in the Sources.
+
+    Citations must replace the keyword in the source text. Do not cite like "(Source: )".`,
           },
           {
             role: "assistant",
-            content:
-              "Use only the provided context or well-established information to answer. Ensure citations are clearly indicated for any data or claims drawn from sources.",
+            content: `Use Markdown format and format for inline citations. 
+              Each citation number should appear directly after the referenced point.
+              Aim for a response that is both clear and well-cited. Ensure every statement is cited.`,
           },
           {
             role: "user",
-            content: `Here is the question: ${query}\n\nPlease use the following context for your answer:\n\n${context}`,
+            content: `Answer the question '${query}?'.
+              SOURCE ${context}`,
           },
         ],
       });
+
       console.log("Cohere response:", response.message?.content?.[0]?.text);
       return response.message?.content?.[0]?.text ?? "No response";
     } catch (error) {

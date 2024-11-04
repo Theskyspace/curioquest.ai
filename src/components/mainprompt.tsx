@@ -28,7 +28,7 @@ export default function MainPrompt() {
     if (query.trim()) {
       setLoading(true);
       try {
-        sessionStorage.setItem('searchQuery', query);
+        await sessionStorage.setItem('searchQuery', query);
         router.push('/search/' + makeChatId(query));
       } catch (error) {
         toast.error('Failed to navigate to search page');
@@ -72,7 +72,9 @@ export default function MainPrompt() {
       </div>
       <div className="flex flex-col md:flex-row md:flex-wrap gap-4 mt-8 w-full max-w-xl">
         {[
-          { suggestion: 'Why people love Leh?', emoji: "🗻" },
+          {
+            suggestion: 'Swap two numbers in python', emoji: "⌨️"
+          },
           { suggestion: 'Taxation In India', emoji: "💰" },
           {
             suggestion: 'How to make dal makhni', emoji: "🥗"
@@ -81,13 +83,13 @@ export default function MainPrompt() {
         ].map((suggestion, index) => (
           <div
             key={index}
-            className="p-2 border bg-primary border-border rounded-xl shadow-md flex items-center cursor-pointer hover:bg-secondary transition-colors w-full md:w-[calc(50%-0.5rem)]"
+            className="p-2 border border-border rounded-xl shadow-md flex items-center cursor-pointer hover:bg-secondary transition-colors w-full md:w-[calc(50%-0.5rem)]"
             onClick={() => {
-              setQuery(suggestion.suggestion);
-              handleSearch();
+              sessionStorage.setItem('searchQuery', suggestion.suggestion);
+              router.push('/search/' + makeChatId(suggestion.suggestion));
             }}
           >
-            <div className="bg-background rounded-xl flex items-center justify-center mr-4 w-8 h-8">
+            <div className="bg-primary rounded-xl flex items-center justify-center mr-4 w-8 h-8">
               <span role="img" aria-label="emoji">{suggestion.emoji}</span>
             </div>
             <p className="text-text text-sm">{suggestion.suggestion}</p>
