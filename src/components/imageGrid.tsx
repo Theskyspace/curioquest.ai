@@ -5,9 +5,10 @@ import { toast } from 'sonner';
 interface ImageGridProps {
     loading: boolean;
     images?: { name: string; url: string; thumbnailUrl: string }[];
+    query: string;
 }
 
-export default function ImageGrid({ loading, images = [] }: ImageGridProps) {
+export default function ImageGrid({ loading, images = [], query }: ImageGridProps) {
     console.log(images);
     if (loading) {
         return (
@@ -26,7 +27,9 @@ export default function ImageGrid({ loading, images = [] }: ImageGridProps) {
         try {
             return (
                 <div className="flex flex-row md:grid md:grid-rows-1 md:grid-cols-2 gap-4">
+
                     {images.slice(0, 5).map((image, index) => (
+
                         <div
                             key={image.url}
                             className={`${index === 0 ? 'md:col-span-2 md:h-48' : 'h-24'
@@ -40,6 +43,17 @@ export default function ImageGrid({ loading, images = [] }: ImageGridProps) {
                             <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black opacity-50"></div>
                         </div>
                     ))}
+                    {images.length === 0 && (
+                        <div
+                            className="p-2 md:col-span-2 border bg-primary border-border rounded-xl shadow-md flex items-center cursor-pointer hover:bg-secondary w-full"
+                            onClick={() => window.open(`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`, '_blank')}
+                        >
+                            <div className="bg-background rounded-xl flex items-center justify-center mr-4 w-8 h-8">
+                                <span role="img" aria-label="emoji">📷</span>
+                            </div>
+                            <p className="text-text text-sm">Search more images</p>
+                        </div>
+                    )}
                 </div>
 
             );

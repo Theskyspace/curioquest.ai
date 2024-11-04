@@ -34,3 +34,12 @@ h3 {
   font-weight: bold;
   margin: 0.83em 0;
 }
+
+pre {
+  background-color: #202222;
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+}

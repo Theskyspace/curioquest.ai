@@ -8,8 +8,10 @@ export async function POST(request: Request) {
 
   const contextString = context
     .map(
-      (item: { name: number; url: string; snippet: string }) =>
-        `${item.name}\n${item.url}\n${item.snippet}`
+      (item: { name: string; url: string; snippet: string }, index: number) =>
+        `id: ${index + 1}, Name: ${item.name}, URL: ${item.url}, Snippet: ${
+          item.snippet
+        }`
     )
     .join("\n");
   try {
