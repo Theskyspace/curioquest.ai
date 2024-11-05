@@ -41,7 +41,6 @@ function extractBodyText(html: string): string {
 const cache = new Map<string, string>();
 
 export async function GET(req: NextRequest) {
-    console.log("Scraping URLs:");
     const urlParams = new URL(req.url).searchParams;
     const urls = urlParams.get("urls")?.split(",") ?? [];
     if (urls.length === 0) {

@@ -1,16 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import ResponseItemComponent from '@/components/chatResponse';
 import CitationBubble from '@/components/citationBubble';
-import ImageGrid from '@/components/imageGrid';
-import HorizontalGrid from '@/components/sources';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { FaStop } from 'react-icons/fa6';
 import { FiArrowRight } from 'react-icons/fi';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import { toast } from 'sonner';
 
 export default function ChatPage() {
@@ -49,10 +46,10 @@ export default function ChatPage() {
               : item
           )
         );
-        console.log("Context Response:", res.data);
+
       } catch (error) {
-        console.log(error);
         toast.error('Failed to get context');
+        console.error('Failed to get context:', error);
         setIsContextLoading(false);
         return;
       }
@@ -71,7 +68,7 @@ export default function ChatPage() {
           query: followup,
           context: context.context
         });
-        console.log("Answer Response:", res.data);
+
         setResponses((prevResponses) =>
           prevResponses.map((item, index) =>
             index === prevResponses.length - 1 // Update the latest response
@@ -81,7 +78,7 @@ export default function ChatPage() {
         );
       } catch (error) {
         toast.error("Failed to fetch answer.");
-        console.log(error);
+        console.error('Failed to fetch answer:', error);
       }
     }
 
@@ -93,12 +90,12 @@ export default function ChatPage() {
 
   const renderers = {
     p: ({ children }: any) => {
-      console.log("Inside P tag : ", children)
+
       const textContent = children;
 
       if (typeof textContent === 'string') {
         const citationRegex = /\{([\d, ]+)\}/g;
-        console.log("Inside Citation logic P : " + textContent);
+
         const elements: JSX.Element[] = [];
         let lastIndex = 0;
         let match;
@@ -128,13 +125,13 @@ export default function ChatPage() {
       return <p>{children}</p>;
     },
     li: ({ children }: any) => {
-      console.log("Inside P tag : ", children)
+
       const textContent = children;
 
       if (typeof textContent === 'string') {
         // Regex to match citations like {1,2,3} or {1}
         const citationRegex = /\{([\d, ]+)\}/g;
-        console.log("Inside Citation logic : " + textContent);
+
         const elements: JSX.Element[] = [];
         let lastIndex = 0;
         let match;
@@ -199,41 +196,12 @@ export default function ChatPage() {
           {/* Loop over each question and response pair */}
           {/* TODO: Modularixe this element */}
           {responses.map((responseItem, index) => (
-            <div key={index} className="md:grid grid-cols-12 text-text gap-xl mb-12">
-              <div className="col-span-8">
-                <h1 className="text-3xl">{responseItem.question}</h1>
-
-                <div className="rounded-lg">
-                  <h2 className="text-xl mb-2">Sources</h2>
-                  <HorizontalGrid loading={isContextLoading} source_items={responseItem.context?.searchEngine?.webPages || []} />
-                </div>
-
-                <div className="rounded-lg">
-                  <h2 className="text-xl mb-2">Answer</h2>
-                  <div className="text-text">
-                    {responseItem.isLoading ? (
-                      <div className="space-y-2">
-                        {[...Array(3)].map((_, i) => (
-                          <div key={i} className="h-4 bg-darkGray rounded animate-pulse"></div>
-                        ))}
-                      </div>
-                    ) : (
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        className="prose"
-                        components={renderers}
-                      >{responseItem.answer || 'Failed to fetch answer'}</ReactMarkdown>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-span-4 mx-8">
-                <div className='sticky top-headerHeight z-10 mt-md flex max-h-[calc(100vh_-var(--header-height))] flex-col pt-md'>
-                  <ImageGrid loading={isContextLoading} images={responseItem.context?.searchEngine?.images || []} query={responses[responses.length - 1].question} />
-                </div>
-              </div>
-            </div>
+            <ResponseItemComponent
+              key={index}
+              responseItem={responseItem}
+              isContextLoading={isContextLoading}
+              renderers={renderers}
+            />
           ))}
         </div>
 

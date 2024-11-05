@@ -10,7 +10,6 @@ export class CohereService {
   }
 
   async generateAnswer(context: string, query: string) {
-    console.log("********* CohereService.generateAnswer:", context, query);
     try {
       const response = await this.cohere.chat({
         model: "command-r-plus",
@@ -35,7 +34,6 @@ export class CohereService {
         ],
       });
 
-      console.log("Cohere response:", response.message?.content?.[0]?.text);
       return response.message?.content?.[0]?.text ?? "No response";
     } catch (error) {
       console.error("Cohere API error:", error);

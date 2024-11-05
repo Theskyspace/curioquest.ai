@@ -24,7 +24,6 @@ function getSiteName(url: string) {
 
 
 const CitationBubble: React.FC<CitationBubbleProps> = ({ numbers, sources }) => {
-    console.log("Sources", sources)
     return (
         <span className="citation-bubble">
             {numbers.map((number) => (

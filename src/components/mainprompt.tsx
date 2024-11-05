@@ -32,7 +32,7 @@ export default function MainPrompt() {
         router.push('/search/' + makeChatId(query));
       } catch (error) {
         toast.error('Failed to navigate to search page');
-        console.log('Failed to navigate to search page', error);
+        console.error('Failed to navigate to search page', error);
       } finally {
         setLoading(false);
       }

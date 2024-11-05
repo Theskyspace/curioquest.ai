@@ -9,7 +9,7 @@ interface ImageGridProps {
 }
 
 export default function ImageGrid({ loading, images = [], query }: ImageGridProps) {
-    console.log(images);
+
     if (loading) {
         return (
             <div className="grid grid-cols-1 gap-4">
