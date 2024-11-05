@@ -20,10 +20,15 @@
 - [Deployment](#deployment)
 - [Usage](#usage)
 - [Design Decisions](#design-decisions)
+- [Architecture](#Architecture)
 
 ---
 
 ### Overview
+<p align="center">
+  <img width="900" alt="Home Screen of CurioQuest" src="https://github.com/user-attachments/assets/45dfb1a7-a0f2-455b-b74b-442d5ecd763b"/>
+</p>
+
 CurioQuest combines real-time Bing Search with Cohere AI to deliver reliable, source-cited answers, reducing misinformation and enhancing the accuracy of every response. It’s designed not just for curiosity-driven exploration, but also as a showcase of cutting-edge tech, all while aiming to build something cool enough to get noticed—and maybe even **hired!**
 
 ---
@@ -95,6 +100,13 @@ CurioQuest combines real-time Bing Search with Cohere AI to deliver reliable, so
     - CurioQuest: Uses the previous context to provide an updated answer with sources.
 
 ---
+
+### Architecture
+
+<p align="center">
+<img width="622" alt="Screenshot 2024-11-05 at 1 09 14 PM" src="https://github.com/user-attachments/assets/be28e7ff-54b9-422c-b1c2-27fe1cdc0fd8">
+</p>
+
 ### Design Decisions
 
 
