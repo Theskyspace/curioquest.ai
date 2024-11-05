@@ -8,6 +8,7 @@ export async function POST(request: NextRequest) {
   console.log("Query:", query);
 
   interface FinalResponse {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     searchEngine?: any;
     context?: string[];
   }

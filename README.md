@@ -20,6 +20,7 @@
 - [Deployment](#deployment)
 - [Usage](#usage)
 - [Design Decisions](#design-decisions)
+- [Architecture](#Architecture)
 
 ---
 
@@ -99,13 +100,13 @@ CurioQuest combines real-time Bing Search with Cohere AI to deliver reliable, so
     - CurioQuest: Uses the previous context to provide an updated answer with sources.
 
 ---
+
 ### Architecture
 
 <p align="center">
 <img width="622" alt="Screenshot 2024-11-05 at 1 09 14 PM" src="https://github.com/user-attachments/assets/be28e7ff-54b9-422c-b1c2-27fe1cdc0fd8">
 </p>
 
----
 ### Design Decisions
 
 

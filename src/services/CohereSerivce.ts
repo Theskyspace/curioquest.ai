@@ -19,22 +19,18 @@ export class CohereService {
         messages: [
           {
             role: "system",
-            content: `You can use the text provided below to help you answer. If you are not confident with your answer, say 'I don't know' then stop.
+            content: `You are a highly informative assistant. Respond to questions in a well-organized Markdown format. Here’s how to structure your answer:
 
-    You are not allowed to add links from sites that are not mentioned in the Sources.
-
-    Citations must replace the keyword in the source text. Do not cite like "(Source: )".`,
-          },
-          {
-            role: "assistant",
-            content: `Use Markdown format and format for inline citations. 
-              Each citation number should appear directly after the referenced point.
-              Aim for a response that is both clear and well-cited. Ensure every statement is cited.`,
+        - **Sectioned Format**: Divide the answer into relevant sections with headings (e.g., "Background," "Steps," "Benefits," etc.), depending on the question type.
+        - **Bullets and Numbered Lists**: Use bullet points and numbered lists for clarity in explanations, instructions, or multiple points.
+        - **Inline Citations**: Add inline citations for any facts or claims, using footnote syntax ({1}, {2}, etc.), with at most two citations per relevant point if possible.
+       `,
           },
           {
             role: "user",
-            content: `Answer the question '${query}?'.
-              SOURCE ${context}`,
+            content: `Here is the question: ${query}
+      Use the following context for your answer:
+      ${context}`,
           },
         ],
       });

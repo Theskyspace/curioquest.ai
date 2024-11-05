@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import CitationBubble from '@/components/citationBubble';
 import ImageGrid from '@/components/imageGrid';
 import HorizontalGrid from '@/components/sources';
 import axios from 'axios';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FaStop } from 'react-icons/fa6';
 import { FiArrowRight } from 'react-icons/fi';
 import ReactMarkdown from 'react-markdown';
@@ -14,9 +16,16 @@ export default function ChatPage() {
   const [followup, setFollowup] = useState<string | null>(sessionStorage.getItem('searchQuery'));
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [isContextLoading, setIsContextLoading] = useState<boolean>(false);
-  const [responses, setResponses] = useState<
-    { question: string; answer: string | null; context: any; isLoading: boolean }[]
-  >([]);
+
+  interface ResponseItem {
+    question: string;
+    answer: string | null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    context: any;
+    isLoading: boolean;
+  }
+
+  const [responses, setResponses] = useState<ResponseItem[]>([]);
 
 
 
@@ -68,9 +77,91 @@ export default function ChatPage() {
 
   };
 
-  handleFollowup();
+  useEffect(() => {
+    handleFollowup();
+  }, []);
+
+  const renderers = {
+    p: ({ children }: any) => {
+      console.log("Inside P tag : ", children)
+      const textContent = children;
+
+      if (typeof textContent === 'string') {
+        const citationRegex = /\{([\d, ]+)\}/g;
+        console.log("Inside Citation logic P : " + textContent);
+        const elements: JSX.Element[] = [];
+        let lastIndex = 0;
+        let match;
+
+        while ((match = citationRegex.exec(textContent)) !== null) {
+          const matchStart = match.index;
+          const matchEnd = match.index + match[0].length;
+          const citationNumbers = match[1].split(',').map((num) => parseInt(num.trim()));
+          if (lastIndex < matchStart) {
+            elements.push(<span key={`text-${lastIndex}`}>{textContent.slice(lastIndex, matchStart)}</span>);
+          }
+          elements.push(<CitationBubble key={`citation-${matchStart}`} numbers={citationNumbers} sources={responses[responses.length - 1].context?.searchEngine?.webPages || {}
+
+          } />);
+
+          lastIndex = matchEnd;
+        }
+
+        // Add remaining text after the last match
+        if (lastIndex < textContent.length) {
+          elements.push(<span key={`text-${lastIndex}`}>{textContent.slice(lastIndex)}</span>);
+        }
+
+        return <p>{elements}</p>;
+      }
+
+      return <p>{children}</p>;
+    },
+    li: ({ children }: any) => {
+      console.log("Inside P tag : ", children)
+      const textContent = children;
+
+      if (typeof textContent === 'string') {
+        // Regex to match citations like {1,2,3} or {1}
+        const citationRegex = /\{([\d, ]+)\}/g;
+        console.log("Inside Citation logic : " + textContent);
+        const elements: JSX.Element[] = [];
+        let lastIndex = 0;
+        let match;
+
+        while ((match = citationRegex.exec(textContent)) !== null) {
+          const matchStart = match.index;
+          const matchEnd = match.index + match[0].length;
+          const citationNumbers = match[1].split(',').map((num) => parseInt(num.trim()));
+
+          // Add text before the citation
+          if (lastIndex < matchStart) {
+            elements.push(<span key={`text-${lastIndex}`}>{textContent.slice(lastIndex, matchStart)}</span>);
+          }
+
+          // Add the citation bubble
+          elements.push(<CitationBubble key={`citation-${matchStart}`} numbers={citationNumbers} sources={responses[responses.length - 1].context?.searchEngine?.webPages || {}
+
+          } />);
+
+          lastIndex = matchEnd;
+        }
+
+        // Add remaining text after the last match
+        if (lastIndex < textContent.length) {
+          elements.push(<span key={`text-${lastIndex}`}>{textContent.slice(lastIndex)}</span>);
+        }
+
+        return <li>{elements}</li>;
+      }
+
+      return <li>{children}</li>;
+    },
+
+  };
 
   return (
+
 
     <div className='md:px-12 pt-12 p-4 lg:px-44 pb-24'>
       <div className="min-h-screen animate-fadeIn">
@@ -100,6 +191,7 @@ export default function ChatPage() {
                     <ReactMarkdown
                       remarkPlugins={[remarkGfm]}
                       className="prose"
+                      components={renderers}
                     >{responseItem.answer || 'Failed to fetch answer'}</ReactMarkdown>
 
                 </div>
