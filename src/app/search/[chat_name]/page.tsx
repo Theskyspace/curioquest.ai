@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 export default function ChatPage() {
   const [followup, setFollowup] = useState<string | null>(sessionStorage.getItem('searchQuery'));
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const [isContextLoading, setIsContextLoading] = useState<boolean>(false);
+  const [isContextLoading, setIsContextLoading] = useState<boolean>(true);
 
   interface ResponseItem {
     question: string;
@@ -32,6 +32,7 @@ export default function ChatPage() {
   const handleFollowup = async () => {
     if (followup) {
       const newResponse = { question: followup, answer: null, context: null, isLoading: true };
+      setResponses([...responses, newResponse]);
       setFollowup("");
       let context = null;
       try {
@@ -39,6 +40,13 @@ export default function ChatPage() {
         context = res.data;
         setIsContextLoading(false);
         newResponse.context = res.data;
+        setResponses((prevResponses) =>
+          prevResponses.map((item, index) =>
+            index === prevResponses.length - 1 // Update the latest response
+              ? { ...item, context: res.data, isLoading: true }
+              : item
+          )
+        );
         console.log("Context Response:", res.data);
       } catch (error) {
         console.log(error);
@@ -46,7 +54,7 @@ export default function ChatPage() {
         setIsContextLoading(false);
         return;
       }
-      setResponses([...responses, newResponse]);
+
 
       // Scroll to the bottom of the page
       await setTimeout(() => {

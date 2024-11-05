@@ -28,7 +28,7 @@ export default function MainPrompt() {
     if (query.trim()) {
       setLoading(true);
       try {
-        await sessionStorage.setItem('searchQuery', query);
+        sessionStorage.setItem('searchQuery', query);
         router.push('/search/' + makeChatId(query));
       } catch (error) {
         toast.error('Failed to navigate to search page');
