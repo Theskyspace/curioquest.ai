@@ -152,10 +152,10 @@ export default function ChatPage() {
           elements.push(<span key={`text-${lastIndex}`}>{textContent.slice(lastIndex)}</span>);
         }
 
-        return <p>{elements}</p>;
+        return <li>{elements}</li>;
       }
 
-      return <p>{children}</p>;
+      return <li>{children}</li>;
     },
 
   };

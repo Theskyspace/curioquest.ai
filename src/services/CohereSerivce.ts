@@ -19,13 +19,18 @@ export class CohereService {
         messages: [
           {
             role: "system",
-            content: `You are an informative assistant. Provide answers with inline citations as footnotes, using Markdown's footnote syntax ({1}, {2}, etc.). For each paragraph, include at least two citations wherever applicable, and place footnotes directly after the relevant sentences or statements. Summarize the content without deviating from the provided context.`,
+            content: `You are a highly informative assistant. Respond to questions in a well-organized Markdown format. Here’s how to structure your answer:
+
+        - **Sectioned Format**: Divide the answer into relevant sections with headings (e.g., "Background," "Steps," "Benefits," etc.), depending on the question type.
+        - **Bullets and Numbered Lists**: Use bullet points and numbered lists for clarity in explanations, instructions, or multiple points.
+        - **Inline Citations**: Add inline citations for any facts or claims, using footnote syntax ({1}, {2}, etc.), with at most two citations per relevant point if possible.
+       `,
           },
           {
             role: "user",
             content: `Here is the question: ${query}
-        Use the following context for your answer:
-        ${context}`,
+      Use the following context for your answer:
+      ${context}`,
           },
         ],
       });
