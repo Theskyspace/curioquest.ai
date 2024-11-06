@@ -77,7 +77,7 @@ export default function ChatPage() {
           )
         );
       } catch (error) {
-        toast.error("Failed to fetch answer.");
+        toast.error("AI Partner failed! Could be due to free tier limit. Please Contact dev.");
         console.error('Failed to fetch answer:', error);
       }
     }

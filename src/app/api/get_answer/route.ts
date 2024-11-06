@@ -21,9 +21,9 @@ export async function POST(request: Request) {
     );
     return NextResponse.json({ answer: generatedAnswer });
   } catch (error) {
-    console.error("Cohere API Error:", error);
+    console.error(error);
     return NextResponse.json(
-      { error: "Our AI Partner failed! Try again later" },
+      { error: `Our AI Partner failed! Try again later, ${error}` },
       { status: 500 }
     );
   }

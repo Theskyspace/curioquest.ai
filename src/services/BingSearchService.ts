@@ -39,7 +39,11 @@ export class BingSearchService {
           ) || [],
       };
     } catch (error) {
-      console.error("Bing Search API error:", error);
+      if (axios.isAxiosError(error)) {
+        console.error("Bing Search API error:", error.response?.data);
+      } else {
+        console.error("Unexpected error:", error);
+      }
       throw new Error(`Failed to fetch search results ${error}`);
     }
   }

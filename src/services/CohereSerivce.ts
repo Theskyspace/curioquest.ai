@@ -36,6 +36,12 @@ export class CohereService {
 
       return response.message?.content?.[0]?.text ?? "No response";
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (error) {
+        throw new Error(
+          "Since we are on Free tier, It has exceeded the limit of requests. Please contact dev."
+        );
+      }
       console.error("Cohere API error:", error);
       throw new Error("Failed to fetch answer from Cohere");
     }
