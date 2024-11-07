@@ -51,7 +51,7 @@ CurioQuest combines real-time Bing Search with Cohere AI to deliver reliable, so
 #### Steps
 1. Clone the repository:
     ```bash
-    git clone https://github.com/username/curioquest.git
+    git clone https://github.com/theskyspace/curioquest.git
     cd curioquest
     ```
 2. Install dependencies:
