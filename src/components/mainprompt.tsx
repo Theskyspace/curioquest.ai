@@ -8,8 +8,20 @@ import { toast } from 'sonner';
 export default function MainPrompt() {
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [greeting, setGreeting] = useState<string>('');
   const router = useRouter();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+      setGreeting('Good Morning ☀️');
+    } else if (hour >= 12 && hour < 17) {
+      setGreeting('Good Afternoon 🌤️');
+    } else {
+      setGreeting('Good Evening 🌙');
+    }
+  }, []);
 
   const makeChatId = (query: string) => {
     const truncatedQuery = query.toLowerCase().replace(/\s/g, '-').substring(0, 100);
@@ -40,12 +52,28 @@ export default function MainPrompt() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center max-h-screen w-full p-4 sm:p-8 animate-fadeIn ">
-      <h1 className="text-4xl font-light text-text mb-8 text-center">What do you want to know?</h1>
-      <div className="relative w-full max-w-xl p-4 border bg-primary border-border rounded-xl shadow-md flex flex-col min-h-[100px]">
+    <div className="flex flex-col items-center justify-center min-h-screen w-full p-4 sm:p-8 animate-fadeIn bg-gradient-to-b from-background to-secondary/20 relative">
+      <h2 className="absolute 
+        text-lg sm:text-xl md:text-2xl 
+        font-light text-white
+        top-4 left-4 
+        sm:top-6 sm:left-6 
+        md:top-8 md:left-8
+        lg:top-8 lg:left-8">
+        {greeting}
+      </h2>
+      <h1 className="text-5xl font-light text-text mb-4 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-500 to-blue-500">
+        What do you want to know?
+      </h1>
+      <p className="text-text/60 mb-8 text-center">Explore the universe of knowledge with a simple question</p>
+      
+      <div className="relative w-full max-w-xl p-6 border bg-primary/80 border-border rounded-2xl 
+        shadow-[0_0_15px_rgba(0,0,0,0.1)] 
+        hover:shadow-[0_0_25px_rgba(6,182,212,0.10)] 
+        backdrop-blur-sm transition-all duration-500">
         <textarea
           ref={textAreaRef}
-          className="w-full bg-transparent text-text rounded-lg resize-none focus:outline-none mb-4"
+          className="w-full bg-transparent text-text rounded-lg resize-none focus:outline-none mb-4 placeholder:text-text/40"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Ask me anything..."
